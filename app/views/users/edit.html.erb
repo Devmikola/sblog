@@ -9,9 +9,7 @@
       <%= f.label :name %>
       <%= f.text_field :name %>
 
-      <%= image_tag current_user.avatar.url %>
       <%= image_tag current_user.avatar.url(:medium) %>
-      <%= image_tag current_user.avatar.url(:thumb) %>
       <%= f.file_field :avatar %>
 
       <%= f.label :password %>

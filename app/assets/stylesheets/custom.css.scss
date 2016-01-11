@@ -203,10 +203,6 @@ ul {
 li {
     overflow: auto;
     padding: 10px 0;
-    border-top: 1px solid $gray-light;
-&:last-child {
-    border-bottom: 1px solid $gray-light;
-}
 }
 }
 
@@ -283,4 +279,22 @@ a.new_chat {
 
 h1 {
     margin-top: 10px;
+}
+
+/* Last modifications */
+li {
+  list-style: none;
+}
+ul {
+  padding: 0px;
+}
+
+.posts {
+  li {
+    margin-bottom: 10px;
+  }
+}
+
+.pagination {
+  margin: 5px 0px;
 }

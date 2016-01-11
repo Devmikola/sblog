@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
 
   get 'static_pages/home'
-
   get 'static_pages/help'
+
+  resources :posts
+  get 'posts/new'
 
   resources :users
   get 'users/new'
