@@ -1,6 +1,8 @@
 <% provide(:title, 'Posts') %>
-<h1>Posts</h1>
-<h4><%= link_to 'Create new post', posts_new_path %></h4>
+<h1><%= link_to @user.name.capitalize, @user, target: '_blank' %> Posts</h1>
+<% if current_user.id == @user.id %>
+    <h4><%= link_to 'Create new post', posts_new_path %></h4>
+<% end %>
 
 <%= will_paginate %>
 
@@ -9,7 +11,7 @@
       <li style="display: block; background-color: #DADADA; padding: 5px 10px; border-radius: 5px;">
         <h3 style=""><%= link_to post.title.capitalize, post %></h3>
         <h5><%= link_to 'posted by ' + post.user.name.capitalize, post.user, target: '_blank' %>
-            <%= 'at ' + post.created_at.strftime('%I:%M %d %b %Y') %>
+          <%= 'at ' + post.created_at.strftime('%d %b %I:%M %Y') %>
         </h5>
         <h5><%= post.short_text %></h5>
       </li>

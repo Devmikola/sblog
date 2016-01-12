@@ -3,8 +3,13 @@ Rails.application.routes.draw do
   get 'static_pages/home'
   get 'static_pages/help'
 
+  #resources :comments
+  match 'posts/:post_id/new_comment', to: 'comments#create', via: 'post', as: 'new_comment'
+  match 'posts/:post_id/new_comment/:parent_id', to: 'comments#create', via: 'post', as: 'new_child_comment'
+
   resources :posts
   get 'posts/new'
+  get 'personal_blog/:name', name: /[a-z]+/, to: 'posts#personal_blog', as: 'personal_blog'
 
   resources :users
   get 'users/new'

@@ -298,3 +298,28 @@ ul {
 .pagination {
   margin: 5px 0px;
 }
+
+.answer {
+  cursor: pointer;
+  color: darkblue;
+}
+.answer:hover {
+  color: darkturquoise;
+}
+
+.default_answer {
+  margin-top: 10px;
+  font-size: medium;
+  cursor: pointer;
+  color: darkblue;
+}
+.default_answer:hover {
+  color: darkturquoise;
+}
+
+.one_comment_tree {
+  margin-bottom: 20px;
+}
+.one_comment_tree > div > .comments > .one_comment_tree {
+  margin-bottom: 5px;
+}

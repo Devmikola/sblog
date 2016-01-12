@@ -1,9 +1,67 @@
 <% provide(:title, @post.title.capitalize ) %>
 <h2> <%= @post.title.capitalize %></h2>
-<h4> <%= @post.created_at.strftime('%d %b %Y') %> </h4>
-<h4> <%= 'Author: ' + @post.user.name.capitalize %> </h4>
-<h4> <%= @post.comments.count %> comments </h4>
-<h4 style="text-align: justify;"> <%= @post.text %> </h4>
+<% if current_user.id == @post.user.id %>
+    <%= link_to 'Edit post', edit_post_path(@post) %>
+<% end %>
+<h5> <%= 'Posted by ' + @post.user.name.capitalize + ' at ' + @post.created_at.strftime('%I:%M %d %b %Y')%> </h5>
+<h5><%= link_to @post.user.name.capitalize + ' personal blog', personal_blog_path(@post.user.name) %></h5>
+<h4 style="text-align: justify; margin-top: 30px; background-color: lightgreen; padding: 10px; border-radius: 10px;"> <%= @post.text %>
+<p class="default_answer"> Answer </p>
+</h4>
+  <% def build_comments input_comments %>
+    <div class="comments">
+      <% input_comments.each do |comment|%>
+          <div class="one_comment_tree">
+              <h5 comment_id="<%= comment.id %>" id_in_post="<%= comment.id_in_post %>"
+              style="background-color: lightblue; padding: 10px; border-radius: 10px; ">
+                    <b><%= "\##{comment.id_in_post}"%></b>
+                    <%= link_to comment.user.name.capitalize, users_path(comment.user), target: '_blank' %>
+                    <%= 'posted at ' + comment.created_at.strftime('%I:%M %d %b %Y') %>
+                    <p style="margin-top: 5px;"> <%= comment.text %> </p>
+                    <p class="answer">Answer<p>
+              </h5>
+              <% unless comment.children.empty? %>
+                  <div style="margin-left: 20px; padding: 10px; border-left: 1px solid;">
+                      <% build_comments comment.children %>
+                  </div>
+              <% end %>
+          </div>
+      <% end %>
+    </div>
+  <% end %>
 
+  <% build_comments @parent_comments %>
 
+<%= form_for @new_comment, url: new_comment_path(@post.id), remote: true do |f| %>
+    <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, style: 'margin-bottom: 1px;' %>
+    <%= f.submit 'Send', class: "btn btn-large btn-primary", id: 'send_comment' %>
+<% end %>
 
+<script>
+
+$(document).ready(function(){
+    $("#new_comment").bind("ajax:complete", function(event, xhr, status){
+        $("#new_comment").attr("action", default_action)
+        location.reload();
+        $("#comment_text").val('');
+    });
+
+    default_action = $("#new_comment").attr("action")
+
+    $(".answer").click(function(){
+        id_in_post = $(this).parent().attr("id_in_post")
+        parent_id = $(this).parent().attr("comment_id")
+        $("#new_comment").attr("action", default_action + '/' + parent_id)
+        $("#comment_text").attr("placeholder", "Write answer for #" + id_in_post + " comment")
+        jQuery.scrollTo('#new_comment', 500);
+    });
+
+    $(".default_answer").click(function(){
+        $("#new_comment").attr("action", default_action)
+        $("#comment_text").attr("placeholder", "Write a comment" )
+        jQuery.scrollTo('#new_comment', 500);
+    });
+
+});
+
+</script>

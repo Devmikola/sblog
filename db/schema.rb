@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160111124318) do
+ActiveRecord::Schema.define(version: 20160112143901) do
 
   create_table "comments", force: true do |t|
     t.integer  "parent_id"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20160111124318) do
     t.string   "text",       limit: 860
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "id_in_post"
   end
 
   create_table "posts", force: true do |t|
