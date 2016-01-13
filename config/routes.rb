@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   get 'static_pages/help'
 
   #resources :comments
+  match 'comments/:comment_id/destroy', to: 'comments#destroy', via: 'delete', as: 'delete_comment'
+  match 'comments/:comment_id/update_comment', to: 'comments#update', via: 'patch', as: 'update_comment'
   match 'posts/:post_id/new_comment', to: 'comments#create', via: 'post', as: 'new_comment'
   match 'posts/:post_id/new_comment/:parent_id', to: 'comments#create', via: 'post', as: 'new_child_comment'
 

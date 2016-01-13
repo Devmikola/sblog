@@ -5,45 +5,74 @@
 <% end %>
 <h5> <%= 'Posted by ' + @post.user.name.capitalize + ' at ' + @post.created_at.strftime('%I:%M %d %b %Y')%> </h5>
 <h5><%= link_to @post.user.name.capitalize + ' personal blog', personal_blog_path(@post.user.name) %></h5>
-<h4 style="text-align: justify; margin-top: 30px; background-color: lightgreen; padding: 10px; border-radius: 10px;"> <%= @post.text %>
-<p class="default_answer"> Answer </p>
-</h4>
-  <% def build_comments input_comments %>
-    <div class="comments">
-      <% input_comments.each do |comment|%>
-          <div class="one_comment_tree">
-              <h5 comment_id="<%= comment.id %>" id_in_post="<%= comment.id_in_post %>"
-              style="background-color: lightblue; padding: 10px; border-radius: 10px; ">
-                    <b><%= "\##{comment.id_in_post}"%></b>
-                    <%= link_to comment.user.name.capitalize, users_path(comment.user), target: '_blank' %>
-                    <%= 'posted at ' + comment.created_at.strftime('%I:%M %d %b %Y') %>
-                    <p style="margin-top: 5px;"> <%= comment.text %> </p>
-                    <p class="answer">Answer<p>
-              </h5>
-              <% unless comment.children.empty? %>
-                  <div style="margin-left: 20px; padding: 10px; border-left: 1px solid;">
-                      <% build_comments comment.children %>
-                  </div>
-              <% end %>
-          </div>
-      <% end %>
-    </div>
-  <% end %>
+<h4 style="text-align: justify; margin-top: 30px; background-color: lightgreen; padding: 10px; border-radius: 10px;" class="post_text"><%= @post.text %><p class="default_answer"> Answer </p></h4>
 
-  <% build_comments @parent_comments %>
+<div class="comments">
+    <%= render partial: 'comments/build_comments_tree', locals: {input_comments: @parent_comments}%>
+</div>
 
 <%= form_for @new_comment, url: new_comment_path(@post.id), remote: true do |f| %>
-    <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, style: 'margin-bottom: 1px;' %>
+    <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, id: 'new_comment_text',style: 'margin-bottom: 1px;' %>
     <%= f.submit 'Send', class: "btn btn-large btn-primary", id: 'send_comment' %>
 <% end %>
 
 <script>
 
 $(document).ready(function(){
+    $("#new_comment").submit(function(e){
+        if(!$("#new_comment_text").val())
+        {
+            return false
+        }
+    });
+
+    parent_id = null
+
     $("#new_comment").bind("ajax:complete", function(event, xhr, status){
         $("#new_comment").attr("action", default_action)
-        location.reload();
-        $("#comment_text").val('');
+        if(parent_id)
+        {
+            children_comments = $("h5[comment_id=" + parent_id + "]").parent().find(".children_comments")
+            if(children_comments.length)
+            {
+                $("h5[comment_id=" + parent_id + "]").parent().find(".children_comments").first().append(xhr.responseJSON['new_comment'])
+            }
+            else
+            {
+                wrapper = '<div class="children_comments">' + xhr.responseJSON['new_comment'] + '</div>'
+                $("h5[comment_id=" + parent_id + "]").parent().append(wrapper)
+            }
+        }
+        else
+        {
+            $(".comments").append(xhr.responseJSON['new_comment'])
+        }
+        parent_id = null
+        $("#new_comment").attr("action", default_action)
+        $("#new_comment_text").attr("placeholder", "Write a comment" )
+        $("#new_comment_text").val('')
+
+        jQuery.scrollTo($("h5[comment_id=" + xhr.responseJSON['comment_id'] + "]").offset().top-70, 500)
+    });
+
+    $(".delete_comment").bind("ajax:complete", function(event, xhr, status){
+        if(xhr.responseJSON['result'] == 'success')
+        {
+            comment_text = $(this).parents().eq(2).find(".show_comment_text").first()
+            $(this).parents().eq(2).find(".updated_at").first().html('deleted at ' + xhr.responseJSON['deleted_at'])
+            comment_text.html('This comment was deleted and frozen.<br/>Function answer no longer available for it.')
+            comment_text.removeClass("show_comment_text")
+            comment_text.addClass("deleted_comment_text")
+            $(this).parents().eq(2).find(".after_delete_comment").slice(0, 5).remove()
+        }
+        else
+        {
+            alert("Something goes wrong.\nWrite to administrator.")
+        }
+    });
+
+    $(".edit_comment").bind("ajax:complete", function(event, xhr, status){
+        $(this).parent().find(".updated_at").html('updated at ' + xhr.responseJSON['updated_at'])
     });
 
     default_action = $("#new_comment").attr("action")
@@ -52,14 +81,53 @@ $(document).ready(function(){
         id_in_post = $(this).parent().attr("id_in_post")
         parent_id = $(this).parent().attr("comment_id")
         $("#new_comment").attr("action", default_action + '/' + parent_id)
-        $("#comment_text").attr("placeholder", "Write answer for #" + id_in_post + " comment")
+        $("#new_comment_text").attr("placeholder", "Write answer for #" + id_in_post + " comment")
         jQuery.scrollTo('#new_comment', 500);
     });
 
     $(".default_answer").click(function(){
+        parent_id = null
         $("#new_comment").attr("action", default_action)
-        $("#comment_text").attr("placeholder", "Write a comment" )
+        $("#new_comment_text").attr("placeholder", "Write a comment" )
         jQuery.scrollTo('#new_comment', 500);
+    });
+
+    $(".edit_comment_button").click(function(){
+        parent = $(this).parent()
+        parent.find("form").removeClass('display_none')
+        parent.find(".show_comment_text").addClass('display_none')
+        parent.find(".edit_comment_button").addClass('display_none')
+        parent.find(".artificial_save_changes_button").removeClass('display_none')
+        parent.find(".discard_changes").removeClass('display_none')
+    });
+    $(".discard_changes").click(function(){
+        parent = $(this).parent()
+        parent.find("form").addClass('display_none')
+        parent.find("textarea").val(parent.find(".show_comment_text").html())
+        parent.find(".show_comment_text").removeClass('display_none')
+        parent.find(".edit_comment_button").removeClass('display_none')
+        parent.find(".artificial_save_changes_button").addClass('display_none')
+        parent.find(".discard_changes").addClass('display_none')
+    });
+
+    $(".artificial_save_changes_button").click(function(){
+        parent = $(this).parent()
+        textarea = parent.find("textarea").val()
+        if(textarea)
+        {
+            parent.find("input[type='submit']").click()
+            parent.find("form").addClass('display_none')
+            parent.find(".show_comment_text").removeClass('display_none')
+            parent.find(".show_comment_text").html(textarea)
+            parent.find(".edit_comment_button").removeClass('display_none')
+            parent.find(".artificial_save_changes_button").addClass('display_none')
+            parent.find(".discard_changes").addClass('display_none')
+        }
+        else
+        {
+            alert("You can not send empty comment.\nTo delete comment click Delete comment link.")
+            parent.find("textarea").val(parent.find(".show_comment_text").html())
+        }
     });
 
 });

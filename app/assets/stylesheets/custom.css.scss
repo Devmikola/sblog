@@ -313,6 +313,7 @@ ul {
   cursor: pointer;
   color: darkblue;
 }
+
 .default_answer:hover {
   color: darkturquoise;
 }
@@ -322,4 +323,40 @@ ul {
 }
 .one_comment_tree > div > .comments > .one_comment_tree {
   margin-bottom: 5px;
+}
+
+.edit_comment_button, .artificial_save_changes_button, .discard_changes, .delete_comment_button{
+  margin-left: 10px;
+  cursor: pointer;
+  color: darkblue;
+}
+.edit_comment_button:hover, .artificial_save_changes_button:hover,
+.discard_changes:hover, .delete_comment_button:hover {
+  color: darkturquoise;
+}
+
+.edit_comment > textarea {
+  background-color: lightcyan;
+}
+
+.show_comment_text, .post_text {
+  white-space: pre-wrap;
+}
+
+.deleted_comment_text {
+  color: #ff0000;
+}
+
+.updated_at {
+  color: green;
+}
+
+.created_at {
+  color: olive;
+}
+
+.children_comments {
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 1px solid;
 }
