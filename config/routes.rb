@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   resources :posts
   get 'posts/new'
-  get 'personal_blog/:name', name: /[a-z]+/, to: 'posts#personal_blog', as: 'personal_blog'
+  get 'personal_blog/:name', to: 'posts#personal_blog', as: 'personal_blog'
 
   resources :users
   get 'users/new'
