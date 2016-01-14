@@ -35,81 +35,6 @@ textarea {
     resize: vertical;
 }
 
-.chat {
-    background-color: #eeeeee;
-    height: 85%;
-    overflow-y: scroll;
-}
-
-.chat td#name {
-    padding-left: 1px;
-    margin-right: 10px;
-}
-
-.table_chats {
-    border: 2px solid;
-}
-
-.table_chats td {
-    padding: 5px;
-}
-
-.chats tr td {
-    padding: 1px;
-}
-
-td.reset_unread_msgs{
-    text-align: center;
-}
-
-td.reset_unread_msgs:hover{
-    background-color: dodgerblue;
-    width: 198px;
-}
-
-.tr_link:hover {
-    background-color: lightskyblue;
-    cursor: pointer;
-}
-
-.center {
-    text-align: center;
-}
-
-.center h1 {
-    margin-bottom: 10px;
-}
-
-a {
-    text-decoration: none !important;
-}
-
-
-#ext_tbl_chat {
-    position: relative;
-    width: 1100px;
-    border: solid 1px black;
-    height: 70%;
-}
-
-
-#new_message {
-    bottom: 0;
-    width: 100%;
-    height: 15%;
-}
-
-textarea#message_text {
-    margin-bottom: 0px;
-    padding-left: 5px;
-    font-size: 19px;
-    height: 100%;
-}
-
-#send_message {
-    border-radius: 0;
-}
-
 /* header */
 
 #logo {
@@ -206,72 +131,10 @@ li {
 }
 }
 
-/* Last added */
-
-.chat_members {
-    resize: none;
-}
-
-a.new_chat {
-    display: block;
-    margin: 0 40px 10px 0;
-}
-
-.chat_name {
-    width: 150px;
-}
-
-.author_name {
-    width: 150px;
-}
-
-.num_unread_msgs {
-    width: 199px;
-}
-
-.message_text {
-    width: 400px;
-}
-
-
-.chat .msg_dttm {
-    text-align: right;
-    padding-right: 10px;
-    width: 167px;
-    vertical-align: top;
-}
-
-.chat .message_text {
-    width: 833px;
-    vertical-align: top;
-}
-
-.chat .author_name {
-    width: 90px;
-    vertical-align: top;
-}
-
-.delete_chat {
-    float: right;
-    padding-right: 20px;
-}
-
-.bot_message {
-    text-align: center;
-    background-color: azure;
-}
-
 .navbar-inner{
     font-weight: bold;
 }
 
-.chat table {
-    width: 100%
-}
-
-.members_names img {
-    margin-left: 8px;
-}
 
 .display_none {
     display: none;
@@ -292,6 +155,10 @@ ul {
 .posts {
   li {
     margin-bottom: 10px;
+    display: block;
+    background-color: #DADADA;
+    padding: 5px 10px;
+    border-radius: 5px;
   }
 }
 
@@ -302,6 +169,7 @@ ul {
 .answer {
   cursor: pointer;
   color: darkblue;
+  padding-left: 10px;
 }
 .answer:hover {
   color: darkturquoise;
@@ -320,6 +188,7 @@ ul {
 
 .one_comment_tree {
   margin-bottom: 20px;
+  width: 500px;
 }
 .one_comment_tree > div > .comments > .one_comment_tree {
   margin-bottom: 5px;
@@ -335,8 +204,23 @@ ul {
   color: darkturquoise;
 }
 
+.edit_comment {
+  margin: 5px 0px;
+  float: left;
+  padding: 10px 0 0 10px;
+  width: 350px;
+}
+
 .edit_comment > textarea {
   background-color: lightcyan;
+}
+
+.post_text {
+  text-align: justify;
+  margin-top: 30px;
+  background-color: lightgreen;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .show_comment_text, .post_text {
@@ -347,16 +231,64 @@ ul {
   color: #ff0000;
 }
 
+.show_comment_text, .deleted_comment_text {
+  margin: 5px 0px;
+  float: left;
+  padding: 10px 0 0 10px;
+}
+
 .updated_at {
   color: green;
+  margin-bottom: 5px;
+}
+
+.base_comment > .updated_at {
+  padding-left: 10px;
 }
 
 .created_at {
   color: olive;
 }
 
+.base_comment {
+  background-color: lightblue;
+  padding: 10px;
+  border-radius: 10px;
+}
+
 .children_comments {
   margin-left: 20px;
   padding-left: 10px;
   border-left: 1px solid;
+}
+
+#new_comment_text {
+  margin-bottom: 1px;
+}
+
+.clear {
+  clear: both;
+}
+
+.image_wrapper {
+  float: left;
+  padding: 10px 10px;
+}
+
+.delete_post {
+  margin-left: 10px;
+}
+
+.post_edit {
+  margin-top: 16px;
+}
+
+.user_edit_image {
+  float: left;
+}
+
+.user_edit_fields {
+  float: left;
+  margin-left: 20px;
+  width: 400px;
 }

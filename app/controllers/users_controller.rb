@@ -22,12 +22,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def destroy
-    current_user.destroy
-    flash[:success] = 'Profile was deleted'
-    redirect_to root_path
-  end
-
   def new
     @user = User.new
   end
@@ -40,6 +34,15 @@ class UsersController < ApplicationController
       redirect_to @user
     else
       render 'new'
+    end
+  end
+
+  def destroy
+    if User.find(params[:id]).destroy
+      flash[:success] = 'Your account and all related data was removed.'
+      redirect_to root_path
+    else
+      render 'edit'
     end
   end
 

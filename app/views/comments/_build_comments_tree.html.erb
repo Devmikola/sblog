@@ -1,54 +1,64 @@
 <% def build_comments input_comments %>
-  <% input_comments.each do |comment|%>
-      <div class="one_comment_tree">
-              <h5 comment_id="<%= comment.id %>" id_in_post="<%= comment.id_in_post %>"
-              style="background-color: lightblue; padding: 10px; border-radius: 10px; ">
-                    <b><%= "\##{comment.id_in_post}"%></b>
-                    <%= link_to comment.user.name.capitalize, users_path(comment.user), target: '_blank' %>
+<%
+     input_comments.each do |comment| %>
+        <div class="one_comment_tree">
+          <h5 comment_id="<%= comment.id %>" id_in_post="<%= comment.id_in_post %>" class="base_comment">
+            <b><%= "\##{comment.id_in_post}" %></b>
+            <%= link_to comment.user.name.capitalize, users_path(comment.user), target: '_blank' %>
 
-                    <span class="created_at">
+            <span class="created_at">
                         <%= 'posted at ' + comment.created_at.strftime('%I:%M %b %d %Y') %>
+            </span>
+
+
+            <div class="clear"></div>
+            <div class="image_wrapper">
+              <%= image_tag comment.user.avatar.url(:thumb) %>
+            </div>
+
+            <% if current_user.id == comment.user.id %>
+                <%= form_for comment, url: update_comment_path(comment), remote: true, html: {class: 'edit_comment display_none'} do |f| %>
+                    <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, id: "comment_text_#{comment.id}" %>
+                    <%= f.submit 'Save changes', class: 'btn btn-large btn-primary display_none', id: "update_comment_#{comment.id}" %>
+                <% end %>
+                </p>
+            <% end %>
+
+            <% unless comment.text %>
+                <div class="deleted_comment_text">This comment was deleted and frozen.<br/>Function answer no longer
+                  available for it.
+                </div>
+            <% else %>
+                <div class="show_comment_text"><%= comment.text %></div>
+            <% end %>
+            <div class="clear"></div>
+
+            <div class="updated_at">
+              <% if comment.updated_at != comment.created_at %>
+                  <%= (comment.text ? 'updated at ' : 'deleted at ') + comment.updated_at.strftime('%I:%M %b %d %Y') %>
+              <% end %>
+            </div>
+
+            <% if comment.text %>
+                <span class="answer after_delete_comment">Answer</span>
+                <% if current_user.id == comment.user.id %>
+                    <span class="edit_comment_button after_delete_comment"> Edit comment </span>
+                    <span class="discard_changes display_none after_delete_comment">Discard changes</span>
+                    <span class="artificial_save_changes_button display_none after_delete_comment"> Save changes </span>
+                    <span class="delete_comment_button after_delete_comment">
+                        <%= link_to 'Delete comment', delete_comment_path(comment), method: 'delete',
+                            data: {confirm: 'Are you sure you want to delete this comment  ?'}, class: 'delete_comment', remote: true %>
                     </span>
-
-                    <% if current_user.id == comment.user.id %>
-                        <p style="margin-top: 5px;">
-                            <%= form_for comment, url: update_comment_path(comment), remote: true, html: {class: 'edit_comment display_none'} do |f| %>
-                                <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, id: "comment_text_#{comment.id}", style: 'margin-bottom: 1px;' %>
-                                <%= f.submit 'Save changes', class: "btn btn-large btn-primary display_none", id: "update_comment_#{comment.id}" %>
-                            <% end %>
-                        </p>
-                    <% end %>
-
-                    <% unless comment.text %>
-                        <div style="margin: 5px 0px;" class="deleted_comment_text">This comment was deleted and frozen.<br/>Function answer no longer available for it.</div>
-                    <% else %>
-                        <div style="margin: 5px 0px;" class="show_comment_text"><%= comment.text %></div>
-                    <% end %>
-
-                    <div class="updated_at" style="margin-bottom: 5px;">
-                        <% if comment.updated_at != comment.created_at %>
-                                <%= (comment.text ? 'updated at ' : 'deleted at ') + comment.updated_at.strftime('%I:%M %b %d %Y') %>
-                        <% end %>
-                    </div>
-
-                    <% if current_user.id == comment.user.id && comment.text %>
-                        <span class="answer after_delete_comment">Answer</span>
-                        <span class="edit_comment_button after_delete_comment"> Edit comment </span>
-                        <span class="discard_changes display_none after_delete_comment">Discard changes</span>
-                        <span class="artificial_save_changes_button display_none after_delete_comment"> Save changes </span>
-                        <span class="delete_comment_button after_delete_comment">
-                            <%= link_to 'Delete comment', delete_comment_path(comment), method: 'delete',
-                                data: { confirm: 'Are you sure you want to delete this comment  ?' }, class: 'delete_comment', remote: true %>
-                        </span>
-                    <% end %>
-              </h5>
+                <% end %>
+            <% end %>
+          </h5>
           <% unless comment.children.empty? %>
-              <div class="children_comments" style="">
-                  <% build_comments comment.children %>
+              <div class="children_comments">
+                <% build_comments comment.children %>
               </div>
           <% end %>
-      </div>
+        </div>
     <% end %>
-  <% end %>
+<% end %>
 
-  <% build_comments input_comments %>
+<% build_comments input_comments %>

@@ -6,14 +6,39 @@
 
 <ul class="posts">
   <% @posts.each do |post| %>
-      <li style="display: block; background-color: #DADADA; padding: 5px 10px; border-radius: 5px;">
-        <h3 style=""><%= link_to post.title.capitalize, post %></h3>
+      <li class="post">
+        <h3><%= link_to post.title.capitalize, post %></h3>
         <h5><%= link_to 'posted by ' + post.user.name.capitalize, post.user, target: '_blank' %>
             <%= 'at ' + post.created_at.strftime('%I:%M %d %b %Y') %>
         </h5>
         <h5><%= post.short_text %></h5>
+        <% if post.updated_at != post.created_at %>
+            <span class="updated_at"><%= 'updated at ' + post.updated_at.strftime('%I:%M %d %b %Y') %></span>
+            <br/>
+        <% end %>
+
+        <%= link_to 'Edit post', edit_post_path(post) if post.user.id == current_user.id %>
+        <%= link_to 'Delete post', post_path(post), method: 'delete', remote: true, class: 'delete_post' if post.user.id == current_user.id %>
+
       </li>
   <% end %>
 </ul>
 
 <%= will_paginate %>
+
+<script>
+  $("a[data-method='delete']").click(function(){
+      var confirm1 = confirm('Are you sure you want to delete selected post ?');
+      if (confirm1 === true) {
+          return confirm('Are you really sure, it can not be reverted ?');
+      }
+      return false;
+  });
+
+  $("a[data-method='delete']").bind("ajax:complete", function(event, xhr, status){
+      if(xhr.responseJSON['result'] === 'success')
+      {
+          $(this).parent().remove()
+      }
+  });
+</script>

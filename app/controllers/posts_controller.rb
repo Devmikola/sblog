@@ -1,13 +1,17 @@
 class PostsController < ApplicationController
   before_action :facecontrol
-
+  before_action :is_post_exist, only: [:destroy, :show, :edit, :update]
   def index
     @posts = Post.order(id: :desc).paginate(page: params[:page], per_page: 5)
   end
 
   def personal_blog
     @user = User.find_by name: params[:name]
-    @posts = @user.posts.order(id: :desc).paginate(page: params[:page], per_page: 5)
+    if @user
+      @posts = @user.posts.order(id: :desc).paginate(page: params[:page], per_page: 5)
+    else
+      redirect_to posts_path
+    end
   end
 
   def new
@@ -44,9 +48,28 @@ class PostsController < ApplicationController
     end
   end
 
+  def destroy
+    @post = Post.find params[:id]
+    if current_user.id == @post.user.id && @post.destroy
+      respond_to do |format|
+        format.json { render(json: {result: 'success'}) }
+        format.html { redirect_to(posts_path) }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: {result: 'failure'} }
+        format.html { render('edit') }
+      end
+    end
+  end
+
   private
 
   def post_params
     params.require(:post).permit(:title, :text, :password_confirmation, :avatar)
+  end
+
+  def is_post_exist
+    redirect_to posts_path unless Post.find_by id: params[:id]
   end
 end

@@ -5,14 +5,14 @@
 <% end %>
 <h5> <%= 'Posted by ' + @post.user.name.capitalize + ' at ' + @post.created_at.strftime('%I:%M %d %b %Y')%> </h5>
 <h5><%= link_to @post.user.name.capitalize + ' personal blog', personal_blog_path(@post.user.name) %></h5>
-<h4 style="text-align: justify; margin-top: 30px; background-color: lightgreen; padding: 10px; border-radius: 10px;" class="post_text"><%= @post.text %><p class="default_answer"> Answer </p></h4>
+<h4 class="post_text"><%= @post.text %><p class="default_answer"> Answer </p></h4>
 
 <div class="comments">
     <%= render partial: 'comments/build_comments_tree', locals: {input_comments: @parent_comments}%>
 </div>
 
 <%= form_for @new_comment, url: new_comment_path(@post.id), remote: true do |f| %>
-    <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, id: 'new_comment_text',style: 'margin-bottom: 1px;' %>
+    <%= f.text_area :text, placeholder: 'Write a comment', rows: 4, id: 'new_comment_text'%>
     <%= f.submit 'Send', class: "btn btn-large btn-primary", id: 'send_comment' %>
 <% end %>
 
@@ -30,29 +30,40 @@ $(document).ready(function(){
 
     $("#new_comment").bind("ajax:complete", function(event, xhr, status){
         $("#new_comment").attr("action", default_action)
-        if(parent_id)
+        if(!xhr.responseJSON['reload_page'])
         {
-            children_comments = $("h5[comment_id=" + parent_id + "]").parent().find(".children_comments")
-            if(children_comments.length)
+            if(parent_id)
             {
-                $("h5[comment_id=" + parent_id + "]").parent().find(".children_comments").first().append(xhr.responseJSON['new_comment'])
+                children_comments = $("h5[comment_id=" + parent_id + "]").parent().find(".children_comments")
+                if(children_comments.length)
+                {
+                    $("h5[comment_id=" + parent_id + "]").parent().find(".children_comments").first().append(xhr.responseJSON['new_comment'])
+                }
+                else
+                {
+                    wrapper = '<div class="children_comments">' + xhr.responseJSON['new_comment'] + '</div>'
+                    $("h5[comment_id=" + parent_id + "]").parent().append(wrapper)
+                }
             }
             else
             {
-                wrapper = '<div class="children_comments">' + xhr.responseJSON['new_comment'] + '</div>'
-                $("h5[comment_id=" + parent_id + "]").parent().append(wrapper)
+                $(".comments").append(xhr.responseJSON['new_comment'])
             }
+            parent_id = null
+            $("#new_comment").attr("action", default_action)
+            $("#new_comment_text").attr("placeholder", "Write a comment" )
+            $("#new_comment_text").val('')
+
+            jQuery.scrollTo($("h5[comment_id=" + parent_id + "]").offset().top-70, 500)
         }
         else
         {
-            $(".comments").append(xhr.responseJSON['new_comment'])
+            alert("This comment was deleted.")
+            jQuery.scrollTo($("h5[comment_id=" + parent_id+ "]").offset().top-70, 500)
+            setTimeout(function(){
+                location.reload()
+            }, 1500)
         }
-        parent_id = null
-        $("#new_comment").attr("action", default_action)
-        $("#new_comment_text").attr("placeholder", "Write a comment" )
-        $("#new_comment_text").val('')
-
-        jQuery.scrollTo($("h5[comment_id=" + xhr.responseJSON['comment_id'] + "]").offset().top-70, 500)
     });
 
     $(".delete_comment").bind("ajax:complete", function(event, xhr, status){
