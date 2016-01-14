@@ -26,8 +26,7 @@ class CommentsController < ApplicationController
     if current_user.id == @comment.user.id && !@comment.text.nil? && @comment.update_attributes(comment_params)
       render json: {updated_at: @comment.updated_at.strftime('%I:%M %b %d %Y') }
     else
-      raise Error
-      #render 'edit'
+      render nothing: true
     end
   end
 

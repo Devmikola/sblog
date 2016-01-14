@@ -1,6 +1,8 @@
 class PostsController < ApplicationController
   before_action :facecontrol
   before_action :is_post_exist, only: [:destroy, :show, :edit, :update]
+
+
   def index
     @posts = Post.order(id: :desc).paginate(page: params[:page], per_page: 5)
   end
