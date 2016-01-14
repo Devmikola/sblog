@@ -1,6 +1,6 @@
 <% provide(:title, @user.name.capitalize ) %>
 <h1> <%= @user.name.capitalize %></h1>
-<h4><%= link_to 'View personal blog', personal_blog_path(@user.name) %></h4>
+<h4><%= link_to 'View personal blog', personal_blog_path(name: @user.name) %></h4>
 <h4> With us from: <%= @user.created_at.strftime('%d %b %Y') %> </h4>
 <h4> <%= @user.posts.count %> created posts </h4>
 <h4> <%= @user.comments.count %> created comments </h4>
