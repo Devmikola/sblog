@@ -4,7 +4,7 @@
     <%= link_to 'Edit post', edit_post_path(@post) %>
 <% end %>
 <h5> <%= 'Posted by ' + @post.user.name.capitalize + ' at ' + @post.created_at.strftime('%I:%M %d %b %Y')%> </h5>
-<h5><%= link_to @post.user.name.capitalize + ' personal blog', personal_blog_path(@post.user.name) %></h5>
+<h5><%= link_to @post.user.name.capitalize + ' personal blog', personal_blog_path(name: @post.user.name) %></h5>
 <h4 class="post_text"><%= @post.text %><p class="default_answer"> Answer </p></h4>
 
 <div class="comments">
