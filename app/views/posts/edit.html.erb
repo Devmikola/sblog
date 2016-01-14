@@ -1,7 +1,7 @@
 <% provide(:title, 'Edit post') %>
 <div class="row">
   <h1>Edit your post</h1>
-  <%= link_to 'Click this to delete this post', post_path(@post), method: 'delete' %>
+  <%= link_to 'Click this to delete this post', post_path(@post), method: 'delete', class: 'delete_post' %>
 </div>
 
 <div class="row post_edit">
@@ -21,7 +21,7 @@
 </div>
 
 <script>
-    $("a[data-method='delete']").click(function(){
+    $("a.delete_post").click(function(){
         var confirm1 = confirm('Are you sure you want to delete selected post ?');
         if (confirm1 === true) {
             return confirm('Are you really sure, it can not be reverted ?');

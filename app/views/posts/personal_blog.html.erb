@@ -27,7 +27,7 @@
 <%= will_paginate %>
 
 <script>
-    $("a[data-method='delete']").click(function(){
+    $("a.delete_post").click(function(){
         var confirm1 = confirm('Are you sure you want to delete selected post ?');
         if (confirm1 === true) {
             return confirm('Are you really sure, it can not be reverted ?');
@@ -35,7 +35,7 @@
         return false;
     });
 
-    $("a[data-method='delete']").bind("ajax:complete", function(event, xhr, status){
+    $("a.delete_post").bind("ajax:complete", function(event, xhr, status){
         if(xhr.responseJSON['result'] === 'success')
         {
             $(this).parent().remove()
